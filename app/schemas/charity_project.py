@@ -1,15 +1,22 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Extra, Field, PositiveInt, validator
-from pydantic.fields import Required
+from pydantic import (
+    BaseModel,
+    Field,
+    PositiveInt,
+    Extra,
+)
+from pydantic.types import StrictInt
 
-from app.core.constants import MAX_LENGTH_NAME
+from app.core.constans import MIN_LENGTH_NAME, MAX_LENGTH_NAME
 
 
 class CharityProjectBase(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=MAX_LENGTH_NAME)
-    description: Optional[str]
+    name: Optional[str] = Field(
+        None, min_length=MIN_LENGTH_NAME, max_length=MAX_LENGTH_NAME
+    )
+    description: Optional[str] = Field(None, min_length=MIN_LENGTH_NAME)
     full_amount: Optional[PositiveInt]
 
     class Config:
@@ -17,34 +24,38 @@ class CharityProjectBase(BaseModel):
 
 
 class CharityProjectCreate(CharityProjectBase):
-    name: str = Field(Required, min_length=1, max_length=MAX_LENGTH_NAME)
-    description: str = Field(Required, min_length=1)
+    name: str = Field(min_length=MIN_LENGTH_NAME, max_length=MAX_LENGTH_NAME)
+    description: str = Field(min_length=MIN_LENGTH_NAME)
     full_amount: PositiveInt
+    invested_amount: int = 0
 
     class Config:
         extra = Extra.forbid
         schema_extra = {
             "example": {
-                "name": "string",
-                "description": "string",
-                "full_amount": 0
+                "name": "Сбор средств для кошечек",
+                "description": "На всё хорошее",
+                "full_amount": 1000,
             }
         }
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    @validator('name', 'description', 'full_amount')
-    def name_cannot_be_null(cls, value, field):
-        if not value:
-            raise ValueError(f'{field} не может быть пустым!')
-        return value
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Новое имя проекта",
+                "description": "Новое описание проекта",
+                "full_amount": 2000,
+            }
+        }
 
 
-class CharityProjectDB(CharityProjectBase):
+class CharityProjectDB(CharityProjectCreate):
     id: int
-    invested_amount: Optional[int] = 0
-    fully_invested: Optional[bool] = False
-    create_date: Optional[datetime]
+    invested_amount: StrictInt
+    fully_invested: bool = False
+    create_date: datetime
     close_date: Optional[datetime]
 
     class Config:

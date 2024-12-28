@@ -51,7 +51,7 @@ pytest-lazy-fixture
 pytest-pythonpath
 pytest
 python-dateutil
-python-dotenv                   
+python-dotenv
 python-multipart
 pyyaml
 requests

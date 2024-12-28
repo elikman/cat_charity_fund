@@ -1,63 +1,64 @@
+from http import HTTPStatus
+
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import project_crud
+from app.core.constans import ValidationError
+from app.crud.charity_project import charity_crud
 from app.models import CharityProject
 from app.schemas.charity_project import CharityProjectUpdate
 
 
-async def check_project_before_edit(
-        project_id: int,
-        session: AsyncSession,
-        obj_in: CharityProjectUpdate = None,
+async def check_name(
+    name: str,
+    session: AsyncSession,
+) -> None:
+    if await charity_crud.get_project_id_by_name(name, session):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=ValidationError.CHARITY_PROJECT_EXISTS.format(name),
+        )
 
+
+async def check_update_data(
+    project_id: int, project_data: CharityProjectUpdate, session: AsyncSession
 ) -> CharityProject:
-    project = await project_crud.get(project_id, session)
-    if not project:
+    db_project = await charity_crud.get_object(project_id, session)
+    if db_project is None:
         raise HTTPException(
-            status_code=404,
-            detail='Проект не найден!'
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=ValidationError.CHARITY_PROJECT_BY_ID_NOT_FOUND.format(
+                project_id
+            ),
         )
-
-    if project.fully_invested:
+    if db_project.fully_invested:
         raise HTTPException(
-            status_code=400,
-            detail='Проект полностью проинвестирован!',
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=ValidationError.DONT_CHANGE_PROJECT_IF_INVEST_EXIST,
         )
-    if obj_in and obj_in.full_amount:
-        if obj_in.full_amount < project.invested_amount:
-            raise HTTPException(
-                status_code=422,
-                detail=f'В проект уже внесено {project.invested_amount}',
-            )
-    elif not obj_in:
-        if project.invested_amount > 0:
-            raise HTTPException(
-                status_code=400,
-                detail='Проект имеет инвестиции!',
-            )
-    return project
+    if (
+        project_data.full_amount and
+            project_data.full_amount < db_project.invested_amount
+    ):
+        raise HTTPException(
+            HTTPStatus.BAD_REQUEST, ValidationError.CHARITY_FULL_AMOUNT_ERROR
+        )
+    if project_data.name != db_project.name:
+        await check_name(project_data.name, session)
+    return db_project
 
 
 async def check_invested_amount(
-        project_id: int,
-        session: AsyncSession
-) -> None:
-    project = await project_crud.get(project_id, session)
-    if project.invested_amount > 0:
+    project_id: int, session: AsyncSession
+) -> CharityProject:
+    db_project = await charity_crud.get_object(project_id, session)
+    if db_project is None:
         raise HTTPException(
-            status_code=400,
-            detail='Проект имеет инвестиции!',
+            HTTPStatus.BAD_REQUEST, ValidationError.CHARITY_PROJECT_EXISTS
         )
-
-
-async def check_name_duplicate(
-        project_name: str,
-        session: AsyncSession
-) -> None:
-    project_id = await project_crud.get_object_by_name(project_name, session)
-    if project_id is not None:
+    if db_project.invested_amount:
         raise HTTPException(
-            status_code=400,
-            detail='Проект с таким именем уже существует!',
+            HTTPStatus.BAD_REQUEST,
+            ValidationError.DONT_DELETE_PROJECT_IF_INVEST_EXIST,
         )
+    return db_project
