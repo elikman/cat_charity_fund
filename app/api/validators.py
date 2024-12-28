@@ -1,67 +1,63 @@
-# from http import HTTPStatus
-
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import charity_project_crud
+from app.crud import project_crud
 from app.models import CharityProject
+from app.schemas.charity_project import CharityProjectUpdate
 
 
-async def check_name_duplicate(project_name: str, session: AsyncSession):
-    """Проверка на повторяющиеся имена для проектов."""
-    charity_project = await charity_project_crud.get_project_by_name(
-        session,
-        project_name
-    )
-    if charity_project is not None:
-        raise HTTPException(
-            status_code=400,
-            detail='Имя благотворительного проекта должно быть уникальным.'
-        )
+async def check_project_before_edit(
+        project_id: int,
+        session: AsyncSession,
+        obj_in: CharityProjectUpdate = None,
 
-
-async def charity_project_exists(
-    project_id: int, session: AsyncSession
 ) -> CharityProject:
-    """Проверка, что объект существует. Возвращает объект если существует."""
-    charity_project = await charity_project_crud.get(project_id, session)
-    if charity_project is None:
+    project = await project_crud.get(project_id, session)
+    if not project:
         raise HTTPException(
             status_code=404,
-            detail='Проект не найден.'
-        )
-    return charity_project
-
-
-async def check_project_is_open(project_id: int, session: AsyncSession):
-    """Проверка, что проект еще открыт."""
-    charity_project = await charity_project_crud.get(project_id, session)
-    if charity_project.close_date and charity_project.fully_invested:
-        raise HTTPException(
-            status_code=400,
-            detail='Нельзя менять закрытый проект.'
+            detail='Проект не найден!'
         )
 
-
-async def check_invested_amount(project_id: int, session: AsyncSession):
-    """Проверка внесения средств в проект."""
-    charity_project = await charity_project_crud.get(project_id, session)
-    if charity_project.invested_amount > 0:
+    if project.fully_invested:
         raise HTTPException(
             status_code=400,
-            detail='В проект внесены средства, его нельзя удалить.'
+            detail='Проект полностью проинвестирован!',
         )
-
-
-async def check_invested_summ(
-        project_id: int, new_full_amount: int, session: AsyncSession
-):
-    """Проверка, что новая сумма сборов выше, чем сумма внесенных средств."""
-    charity_project = await charity_project_crud.get(project_id, session)
-    if charity_project.invested_amount > new_full_amount:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                'Нельзя изменить на сумму, меньшую, чем уже внесено в проект.'
+    if obj_in and obj_in.full_amount:
+        if obj_in.full_amount < project.invested_amount:
+            raise HTTPException(
+                status_code=422,
+                detail=f'В проект уже внесено {project.invested_amount}',
             )
+    elif not obj_in:
+        if project.invested_amount > 0:
+            raise HTTPException(
+                status_code=400,
+                detail='Проект имеет инвестиции!',
+            )
+    return project
+
+
+async def check_invested_amount(
+        project_id: int,
+        session: AsyncSession
+) -> None:
+    project = await project_crud.get(project_id, session)
+    if project.invested_amount > 0:
+        raise HTTPException(
+            status_code=400,
+            detail='Проект имеет инвестиции!',
+        )
+
+
+async def check_name_duplicate(
+        project_name: str,
+        session: AsyncSession
+) -> None:
+    project_id = await project_crud.get_object_by_name(project_name, session)
+    if project_id is not None:
+        raise HTTPException(
+            status_code=400,
+            detail='Проект с таким именем уже существует!',
         )

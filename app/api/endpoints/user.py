@@ -5,27 +5,24 @@ from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
 
-# Роут для получения токена (JWT)
 router.include_router(
+    # В роутер аутентификации
+    # передается объект бэкенда аутентификации.
     fastapi_users.get_auth_router(auth_backend),
     prefix='/auth/jwt',
     tags=['auth'],
 )
-
-# Роут для регистрации пользователя
 router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix='/auth',
     tags=['auth'],
 )
-
-# Сохраняем роут для пользователей, исключая ненужный эндпоинт удаления
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
+# Из списка эндпоинтов роутера исключаем ненужную ручку.
 users_router.routes = [
     rout for rout in users_router.routes if rout.name != 'users:delete_user'
 ]
-
-# Подключаем измененный роут для пользователей
+# Подключаем изменённый роутер по старому адресу.
 router.include_router(
     users_router,
     prefix='/users',

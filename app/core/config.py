@@ -1,19 +1,11 @@
-# core/config.py
-from typing import Optional
-
-from pydantic_settings import BaseSettings
-from pydantic import EmailStr
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_title: str = 'Qr_Kot'
-    app_description: str = 'Tests'
-    app_author: str = 'Вячеслав Любченко'
-    database_url: str = 'sqlite+aiosqlite:///./cat_fund.db'
-    path: str
-    secret: str = 'secret'
-    first_superuser_email: Optional[EmailStr] = None
-    first_superuser_password: Optional[str] = None
+    app_title: str = 'Кошачий благотворительный фонд (0.1.0)'
+    app_description: str = 'Сервис для поддержки котиков!'
+    database_url: str = 'sqlite+aiosqlite:///./fastapi.db'
+    secret: str = 'SECRET'
 
     class Config:
         env_file = '.env'
