@@ -16,6 +16,7 @@ from app.schemas.constans import (
     DEFAULT_FULL_AMOUNT_2,
 )
 
+
 class CharityProjectBase(BaseModel):
     name: Optional[str] = Field(
         None, min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH
