@@ -45,7 +45,9 @@ async def create_charity_project(
 ) -> CharityProject:
     await check_name(charity_project.name, session)
     new_charity_project = await charity_crud.create(charity_project, session)
-    unclosed_donations = await donation_crud.get_all_objects_is_unclosed(session)
+    unclosed_donations = await donation_crud.get_all_objects_is_unclosed(
+        session
+    )
     if unclosed_donations:
         make_investments(new_charity_project, unclosed_donations)
     return new_charity_project
@@ -75,5 +77,6 @@ async def delete_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ) -> CharityProject:
     return await charity_crud.delete(
-        await check_invested_amount(project_id, session), session
+        await check_invested_amount(
+            project_id, session), session
     )
