@@ -42,16 +42,17 @@ auth_backend = AuthenticationBackend(
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def validate_password(
-    self,
-    password: str,
-    user: Union[UserCreate, User],
-) -> None:
-    if len(password) < MIN_PASSWORD_LENGTH:
-        raise InvalidPasswordException(reason=UserMessages.PASSWORD_ERROR)
-    if user.email in password:
-        raise InvalidPasswordException(
-            reason=UserMessages.PASSWORD_NOT_CONTAIN_EMAIL
-        )
+        self,
+        password: str,
+        user: Union[UserCreate, User],
+    ) -> None:
+        if len(password) < MIN_PASSWORD_LENGTH:
+            raise InvalidPasswordException(reason=UserMessages.PASSWORD_ERROR)
+        if user.email in password:
+            raise InvalidPasswordException(
+                reason=UserMessages.PASSWORD_NOT_CONTAIN_EMAIL
+            )
+
 
     async def on_after_register(
         self, user: User, request: Optional[Request] = None

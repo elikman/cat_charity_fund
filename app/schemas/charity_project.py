@@ -9,7 +9,14 @@ from pydantic import (
 )
 from pydantic.types import StrictInt
 
-from app.core.constans import MIN_LENGTH_NAME, MAX_LENGTH_NAME, MIN_NAME_LENGTH, MAX_NAME_LENGTH, FULL_AMOUNT_DEFAULT, FULL_AMOUNT_UPDATE
+from app.core.constans import (
+    MIN_LENGTH_NAME,
+    MAX_LENGTH_NAME,
+    MIN_NAME_LENGTH,
+    MAX_NAME_LENGTH,
+    FULL_AMOUNT_DEFAULT,
+    FULL_AMOUNT_UPDATE
+)
 
 
 class CharityProjectBase(BaseModel):
@@ -37,6 +44,7 @@ class CharityProjectCreate(CharityProjectBase):
                 "full_amount": FULL_AMOUNT_DEFAULT,
             }
         }
+
 
 class CharityProjectUpdate(CharityProjectBase):
     class Config:
