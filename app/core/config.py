@@ -1,7 +1,6 @@
 from typing import Optional
 
-from pydantic_settings import BaseSettings
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseSettings
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
