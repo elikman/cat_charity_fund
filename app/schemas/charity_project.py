@@ -9,19 +9,14 @@ from pydantic import (
 )
 from pydantic.types import StrictInt
 
-from app.schemas.constans import (
-    MIN_NAME_LENGTH,
-    MAX_NAME_LENGTH,
-    DEFAULT_FULL_AMOUNT_1,
-    DEFAULT_FULL_AMOUNT_2,
-)
+from app.core.constans import MIN_LENGTH_NAME, MAX_LENGTH_NAME, MIN_NAME_LENGTH, MAX_NAME_LENGTH, FULL_AMOUNT_DEFAULT, FULL_AMOUNT_UPDATE
 
 
 class CharityProjectBase(BaseModel):
     name: Optional[str] = Field(
-        None, min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH
+        None, min_length=MIN_LENGTH_NAME, max_length=MAX_LENGTH_NAME
     )
-    description: Optional[str] = Field(None, min_length=MIN_NAME_LENGTH)
+    description: Optional[str] = Field(None, min_length=MIN_LENGTH_NAME)
     full_amount: Optional[PositiveInt]
 
     class Config:
@@ -35,15 +30,13 @@ class CharityProjectCreate(CharityProjectBase):
     invested_amount: int = 0
 
     class Config:
-        extra = Extra.forbid
         schema_extra = {
             "example": {
                 "name": "Сбор средств для кошечек",
                 "description": "На всё хорошее",
-                "full_amount": DEFAULT_FULL_AMOUNT_1,
+                "full_amount": FULL_AMOUNT_DEFAULT,
             }
         }
-
 
 class CharityProjectUpdate(CharityProjectBase):
     class Config:
@@ -51,7 +44,7 @@ class CharityProjectUpdate(CharityProjectBase):
             "example": {
                 "name": "Новое имя проекта",
                 "description": "Новое описание проекта",
-                "full_amount": DEFAULT_FULL_AMOUNT_2,
+                "full_amount": FULL_AMOUNT_UPDATE,
             }
         }
 

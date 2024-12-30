@@ -1,8 +1,8 @@
 """Название миграции
 
-Revision ID: eedc3a060c0f
-Revises: be8b214be31a
-Create Date: 2024-12-29 23:21:07.574724
+Revision ID: ae0caebc1f4e
+Revises: c933866880f9
+Create Date: 2024-12-30 15:16:23.843395
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'eedc3a060c0f'
-down_revision = 'be8b214be31a'
+revision = 'ae0caebc1f4e'
+down_revision = 'c933866880f9'
 branch_labels = None
 depends_on = None
 

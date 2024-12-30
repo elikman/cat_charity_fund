@@ -49,5 +49,8 @@ async def create_donation(
     donation = await donation_crud.create(donation, session, user)
     unclosed_projects = await charity_crud.get_all_objects_is_unclosed(session)
     if unclosed_projects:
-        make_investments(donation, unclosed_projects)
+        invested = make_investments(donation, unclosed_projects)
+        session.add_all(invested)
+    await session.commit()
+    await session.refresh(donation)
     return donation

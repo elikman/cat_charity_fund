@@ -49,7 +49,10 @@ async def create_charity_project(
         session
     )
     if unclosed_donations:
-        make_investments(new_charity_project, unclosed_donations)
+        invested = make_investments(new_charity_project, unclosed_donations)
+        session.add_all(invested)
+    await session.commit()
+    await session.refresh(new_charity_project)
     return new_charity_project
 
 
@@ -64,7 +67,10 @@ async def partial_update_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ) -> CharityProject:
     project_db = await check_update_data(project_id, project_data, session)
-    return await charity_crud.patch(project_db, project_data, session)
+    project_db = await charity_crud.patch(project_db, project_data, session)
+    await session.commit()
+    await session.refresh(project_db)
+    return project_db
 
 
 @router.delete(
@@ -77,6 +83,5 @@ async def delete_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ) -> CharityProject:
     return await charity_crud.delete(
-        await check_invested_amount(
-            project_id, session), session
+        await check_invested_amount(project_id, session), session
     )

@@ -10,8 +10,8 @@ APP_DESCRIPTION=A charity project for helping animals
 APP_VERSION=1.0.0
 DATABASE_URL=sqlite+aiosqlite:///./cat_fund.db
 SECRET={secret_key}
-FIRST_SUPERUSER_EMAIL=admin@example.com
-FIRST_SUPERUSER_PASSWORD=superpassword
+FIRST_SUPERUSER_EMAIL=root@admin.ru
+FIRST_SUPERUSER_PASSWORD=root
 AUTH_BACKEND_NAME=basic_auth
 """
 
