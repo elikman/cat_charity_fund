@@ -53,7 +53,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                 reason=UserMessages.PASSWORD_NOT_CONTAIN_EMAIL
             )
 
-
     async def on_after_register(
         self, user: User, request: Optional[Request] = None
     ):
