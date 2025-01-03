@@ -8,8 +8,8 @@ class CharityCrud:
         new_obj = CharityProject(**obj_in.dict())
         session.add(new_obj)
         try:
-            await session.commit()  # Выполняем commit
-            await session.refresh(new_obj)  # Выполняем refresh
+            await session.commit()
+            await session.refresh(new_obj)
         except IntegrityError as e:
             await session.rollback()
             raise e
