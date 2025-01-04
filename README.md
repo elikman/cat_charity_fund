@@ -47,7 +47,7 @@ touch .env
 ```
 5. Создать базу данных из миграций проекта:
 ```bash
-alembic revision --autogenerate -m "Название миграции"
+alembic revision --autogenerate -m "Название миграци"
 alembic upgrade head
 ```
 **Использование**
