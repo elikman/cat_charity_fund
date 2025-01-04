@@ -48,19 +48,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         )
 
     async def create(
-        self,
-        obj_in: CreateSchemaType,
-        session: AsyncSession,
-        user: Optional[ModelType] = None,
-    ) -> ModelType:
-        obj_in_data = obj_in.dict()
-        if user is not None:
-            obj_in_data["user_id"] = user.id
-        creat_obj_for_db = self.model(**obj_in_data)
-        session.add(creat_obj_for_db)
+        charity_project: CharityProjectCreate,
+        session: AsyncSession
+    ) -> CharityProject:
+        new_charity_project = CharityProject(**charity_project.dict())
+        session.add(new_charity_project)
         await session.commit()
-        await session.refresh(creat_obj_for_db)
-        return creat_obj_for_db
+        await session.refresh(new_charity_project)
+        return new_charity_project
 
     @staticmethod
     async def delete(db_object: ModelType, session: AsyncSession) -> ModelType:
