@@ -23,7 +23,7 @@ faker
 fastapi-users-db-sqlalchemy
 fastapi-users[sqlalchemy]
 fastapi
-flake8==6.0.0
+flake8
 freezegun
 greenlet
 h11
@@ -39,7 +39,7 @@ packaging; python_version >= '3.6'
 passlib[bcrypt]
 pluggy
 py
-pycodestyle==2.10.0
+pycodestyle
 pycparser
 pydantic
 pyflakes
