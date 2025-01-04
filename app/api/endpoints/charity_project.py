@@ -44,20 +44,15 @@ async def create_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ) -> CharityProject:
     await check_name(charity_project.name, session)
-    new_charity_project = await charity_crud.create(
-        charity_project,
-        session
-    )
+    new_charity_project = await charity_crud.create(charity_project, session)
     unclosed_donations = await donation_crud.get_all_objects_is_unclosed(
         session
     )
     if unclosed_donations:
-        invested = make_investments(
-            new_charity_project,
-            unclosed_donations
-        )
+        invested = make_investments(new_charity_project, unclosed_donations)
         session.add_all(invested)
         await session.commit()
+        await session.refresh(new_charity_project)
     return new_charity_project
 
 
@@ -69,19 +64,10 @@ async def create_charity_project(
 async def partial_update_charity_project(
     project_id: int,
     project_data: CharityProjectUpdate,
-    session: AsyncSession = Depends(
-        get_async_session
-    ),
+    session: AsyncSession = Depends(get_async_session),
 ) -> CharityProject:
-    project_db = await check_update_data(
-        project_id,
-        project_data, session
-    )
-    project_db = await charity_crud.patch(
-        project_db, project_data,
-        session
-    )
-    return project_db
+    project_db = await check_update_data(project_id, project_data, session)
+    return await charity_crud.patch(project_db, project_data, session)
 
 
 @router.patch(
