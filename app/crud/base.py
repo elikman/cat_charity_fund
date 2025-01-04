@@ -62,7 +62,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await session.refresh(creat_obj_for_db)
         return creat_obj_for_db
 
-
     @staticmethod
     async def delete(db_object: ModelType, session: AsyncSession) -> ModelType:
         await session.delete(db_object)
