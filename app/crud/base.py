@@ -79,3 +79,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await session.commit()
         await session.refresh(db_obj)
         return db_obj
+
+    async def delete(
+        self,
+        db_object: ModelType,
+        session: AsyncSession
+    ) -> ModelType:
+        await session.delete(db_object)
+        await session.commit()
+        return db_object
