@@ -47,18 +47,20 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             .all() 
         ) 
  
-    async def create( 
-        self, 
-        obj_in: CreateSchemaType, 
-        session: AsyncSession, 
-        user: Optional[ModelType] = None, 
-    ) -> ModelType: 
-        obj_in_data = obj_in.dict() 
-        if user is not None: 
-            obj_in_data["user_id"] = user.id 
-        creat_obj_for_db = self.model(**obj_in_data) 
-        session.add(creat_obj_for_db) 
-        return creat_obj_for_db 
+    async def create(
+        self,
+        obj_in: CreateSchemaType,
+        session: AsyncSession,
+        user: Optional[ModelType] = None,
+    ) -> ModelType:
+        obj_in_data = obj_in.dict()
+        if user is not None:
+            obj_in_data["user_id"] = user.id
+        created_obj = self.model(**obj_in_data)
+        session.add(created_obj)
+        await session.commit()
+        await session.refresh(created_obj)
+        return created_obj
  
     @staticmethod 
     async def delete(db_object: ModelType, session: AsyncSession) -> ModelType: 
