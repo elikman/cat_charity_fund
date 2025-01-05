@@ -1,25 +1,8 @@
-from sqlalchemy import Column, String, Text, CheckConstraint
+from sqlalchemy import Column, String, Text
 
-from app.core.constans import ValidationError, MAX_LENGTH_NAME
-from app.models.base import Investment
+from app.models.base import ProjectDonationBase
 
 
-class CharityProject(Investment):
-    name = Column(
-        String(MAX_LENGTH_NAME),
-        unique=True,
-        nullable=False,
-    )
+class CharityProject(ProjectDonationBase):
+    name = Column(String(100), nullable=False, unique=True)
     description = Column(Text, nullable=False)
-
-    _table_args__ = (
-        CheckConstraint("TRIM(name) != ''",
-                        name=ValidationError.NAME_REQUIRED),
-    )
-
-    def __repr__(self):
-        return (
-            f"{super().__repr__()} "
-            f"name={self.name}, "
-            f"description={self.comment}"
-        )

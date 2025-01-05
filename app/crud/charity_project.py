@@ -1,31 +1,34 @@
 from typing import Optional
 
-from fastapi import APIRouter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
-from app.models import CharityProject
-
-router = APIRouter()
+from app.models.charity_project import CharityProject
 
 
 class CRUDCharityProject(CRUDBase):
-    @staticmethod
+
     async def get_project_id_by_name(
-        project_name: str, session: AsyncSession
+            self,
+            project_name: str,
+            session: AsyncSession,
     ) -> Optional[int]:
-        return (
-            (
-                await session.execute(
-                    select(CharityProject.id).where(
-                        CharityProject.name == project_name
-                    )
-                )
+        db_project_id = await session.execute(
+            select(CharityProject.id).where(
+                CharityProject.name == project_name
             )
-            .scalars()
-            .first()
         )
+        db_project_id = db_project_id.scalars().first()
+        return db_project_id
+
+    async def get_open_projects(self, session: AsyncSession):
+        result = await session.execute(
+            select(self.model).where(
+                self.model.fully_invested.is_(False)
+            )
+        )
+        return result.scalars().all()
 
 
-charity_crud = CRUDCharityProject(CharityProject)
+charity_project_crud = CRUDCharityProject(CharityProject)
