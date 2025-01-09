@@ -43,7 +43,7 @@ pip install -r requirements.txt
 ```
 4. Создать файл .env и наполнить его переменными по примеру файла `.env.example`:
 ```bash
-touch .env
+python create_env.py
 ```
 5. Создать базу данных из миграций проекта:
 ```bash
