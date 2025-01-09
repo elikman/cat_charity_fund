@@ -24,6 +24,9 @@ from app.schemas.user import UserCreate
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+JWT_LIFETIME_SECONDS = 3600
+MIN_PASSWORD_LENGTH = 3
+
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
