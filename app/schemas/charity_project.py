@@ -1,50 +1,37 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Extra, Field, PositiveInt, validator
-from pydantic.fields import Required
-
-from app.core.constants import MAX_LENGTH_NAME
+from pydantic import BaseModel, Extra, Field, PositiveInt
 
 
 class CharityProjectBase(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=MAX_LENGTH_NAME)
-    description: Optional[str]
-    full_amount: Optional[PositiveInt]
+    name: Optional[str] = Field(None, max_length=100)
+    description: Optional[str] = Field(None)
+    full_amount: Optional[PositiveInt] = Field(None)
 
     class Config:
         extra = Extra.forbid
+        min_anystr_length = 1
 
 
-class CharityProjectCreate(CharityProjectBase):
-    name: str = Field(Required, min_length=1, max_length=MAX_LENGTH_NAME)
-    description: str = Field(Required, min_length=1)
-    full_amount: PositiveInt
+class CharityProjectCreate(BaseModel):
+    name: str = Field(..., max_length=100)
+    description: str = Field(...)
+    full_amount: PositiveInt = Field(...)
 
     class Config:
-        extra = Extra.forbid
-        schema_extra = {
-            "example": {
-                "name": "string",
-                "description": "string",
-                "full_amount": 0
-            }
-        }
+        min_anystr_length = 1
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    @validator('name', 'description', 'full_amount')
-    def name_cannot_be_null(cls, value, field):
-        if not value:
-            raise ValueError(f'{field} не может быть пустым!')
-        return value
+    pass
 
 
-class CharityProjectDB(CharityProjectBase):
+class CharityProjectDB(CharityProjectCreate):
     id: int
-    invested_amount: Optional[int] = 0
-    fully_invested: Optional[bool] = False
-    create_date: Optional[datetime]
+    invested_amount: int = Field(0)
+    fully_invested: bool = Field(False)
+    create_date: datetime
     close_date: Optional[datetime]
 
     class Config:

@@ -65,3 +65,4 @@ urllib3
 uvicorn[standard]
 watchgod
 websockets
+pydantic_settings
