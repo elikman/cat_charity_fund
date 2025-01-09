@@ -5,6 +5,7 @@ from pydantic import EmailStr, BaseSettings
 
 load_dotenv()
 
+
 class Settings(BaseSettings):
     app_title: str = 'Кошачий благотворительный фонд'
     app_description: str = 'Сервис для поддержки котиков!'
@@ -17,5 +18,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = '.env'
+
 
 settings = Settings()
