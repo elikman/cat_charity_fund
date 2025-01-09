@@ -31,7 +31,6 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
 
-
 bearer_transport = BearerTransport(tokenUrl='auth/jwt/login')
 
 
@@ -63,14 +62,21 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                 reason='Password should not contain e-mail'
             )
 
-    async def on_after_register(self, user: User, request: Optional[Request] = None):
-        async def on_after_register(self, user: User, request: Optional[Request] = None):
+    async def on_after_register(
+        self,
+        user: User,
+        request: Optional[Request] = None
+    ):
+        async def on_after_register(
+            self,
+            user: User,
+            request: Optional[Request] = None
+        ):
             print(f'Пользователь {user.email} зарегистрирован.')
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
-
 
 
 fastapi_users = FastAPIUsers[User, int](
