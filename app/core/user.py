@@ -18,7 +18,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.db import get_async_session
-from app.core.constants import JWT_LIFETIME_SECONDS, MIN_PASSWORD_LENGTH
 from app.models.user import User
 from app.schemas.user import UserCreate
 
