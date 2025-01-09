@@ -1,8 +1,10 @@
 from sqlalchemy import Column, String, Text
 
-from app.models.base import ProjectDonationBase
+from app.core.constants import MAX_LENGTH_NAME
+
+from .base import CharityProjectDonationBase
 
 
-class CharityProject(ProjectDonationBase):
-    name = Column(String(100), nullable=False, unique=True)
+class CharityProject(CharityProjectDonationBase):
+    name = Column(String(MAX_LENGTH_NAME), unique=True, nullable=False)
     description = Column(Text, nullable=False)

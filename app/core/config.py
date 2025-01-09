@@ -1,18 +1,10 @@
-from typing import Optional
-
-from dotenv import load_dotenv
-from pydantic import EmailStr, BaseSettings
-
-load_dotenv()
-
+from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    app_title: str = 'Кошачий благотворительный фонд'
-    description: str = 'Сервис для поддержки котиков!'
-    database_url: str = 'sqlite+aiosqlite:///./qr_kot.db'
+    app_title: str = 'Кошачий благотворительный фонд (0.1.0)'
+    app_description: str = 'Сервис для поддержки котиков!'
+    database_url: str = 'sqlite+aiosqlite:///./fastapi.db'
     secret: str = 'SECRET'
-    first_superuser_email: Optional[EmailStr] = None
-    first_superuser_password: Optional[str] = None
 
     class Config:
         env_file = '.env'

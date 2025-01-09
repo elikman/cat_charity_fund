@@ -38,10 +38,11 @@ class CRUDBase:
             user: Optional[User] = None
     ):
         obj_in_data = obj_in.dict()
+        obj_in_data.pop('created_date', None)
         if user is not None:
+            # ...то дополнить словарь для создания модели.
             obj_in_data['user_id'] = user.id
         db_obj = self.model(**obj_in_data)
-
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
@@ -72,3 +73,63 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
+
+    async def get_earliest_object(
+        self,
+        session: AsyncSession
+
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(
+                self.model.fully_invested == 0
+            ).order_by(self.model.create_date)
+        )
+        return db_obj.scalars().first()
+
+    async def get_unfinished_objects(
+        self,
+        session: AsyncSession
+
+    ):
+        db_obj = await session.execute(
+            select(self.model).where(
+                self.model.fully_invested == 0
+            ).order_by(self.model.create_date)
+        )
+        return db_obj.scalars().all()
+
+    async def get_object_by_name(
+        self,
+        obj_name: str,
+        session: AsyncSession
+    ) -> Optional[int]:
+        db_obj_id = await session.execute(
+            select(self.model.id).where(
+                self.model.name == obj_name
+            )
+        )
+        return db_obj_id.scalars().first()
+
+    async def get_by_user(
+        self,
+        user: User,
+        session: AsyncSession
+    ):
+        objects = await session.execute(
+            select(self.model).where(
+                self.model.user_id == user.id
+            )
+        )
+        return objects.scalars().all()
+
+    async def save_updates(
+        self,
+        session: AsyncSession,
+        target: object,
+        sources: list[object]
+    ):
+        session.add(target)
+        for source in sources:
+            session.add(source)
+        await session.commit()
+        await session.refresh(target)
