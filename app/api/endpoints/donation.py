@@ -10,6 +10,7 @@ from app.schemas.donation import DonationBase, DonationCreate, DonationDB
 
 router = APIRouter()
 
+
 @router.post('/',
              response_model=DonationCreate,
              response_model_exclude_none=True
