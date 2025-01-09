@@ -79,4 +79,4 @@ async def update_charity_project(
 
     return await charity_project_crud.update(
         charity_project, obj_in, session
-    ) 
+    )
