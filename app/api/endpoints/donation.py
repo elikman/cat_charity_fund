@@ -26,20 +26,17 @@ async def create_donation(donation: DonationBase,
     return new_donation
 
 
-@router.get(
-    '/my',
-    response_model=list[DonationCreate],
-    response_model_exclude={'user_id'},
-)
-async def get_user_donations(
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_user)
-):
-    """Вернуть список пожертвований пользователя, выполняющего запрос."""
-    donations = await donation_crud.get_by_user(
-        session=session, user=user
-    )
-    return donations
+@router.get( 
+    '/my', 
+    response_model=list[DonationCreate], 
+    response_model_exclude={'user_id'}, 
+) 
+async def get_user_donations( 
+    session: AsyncSession = Depends(get_async_session), 
+    user: User = Depends(current_user) 
+): 
+    """Вернуть список пожертвований пользователя, выполняющего запрос.""" 
+    return await donation_crud.get_by_user(session=session, user=user)
 
 
 @router.get(
