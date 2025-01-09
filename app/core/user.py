@@ -3,14 +3,14 @@ import logging
 
 from fastapi import Depends, Request
 from fastapi_users import (
-    BaseUserManager, 
-    FastAPIUsers, 
+    BaseUserManager,
+    FastAPIUsers,
     IntegerIDMixin,
     InvalidPasswordException
 )
 from fastapi_users.authentication import (
     AuthenticationBackend,
-    BearerTransport, 
+    BearerTransport,
     JWTStrategy
 )
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
@@ -64,8 +64,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             )
 
     async def on_after_register(
-        self, 
-        user: User, 
+        self,
+        user: User,
         request: Optional[Request] = None
     ):
         logger.info(f'Пользователь {user.email} зарегистрирован.')
