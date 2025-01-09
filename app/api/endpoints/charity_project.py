@@ -26,7 +26,7 @@ async def get_all_charity_projects(
 ):
     """Возвращает список всех проектов."""
     all_projects = await charity_project_crud.get_multi(session)
-    return all_projects
+    return await charity_project_crud.get_multi(session)
 
 
 @router.post(
@@ -72,38 +72,31 @@ async def delete_charity_project(
     project = await check_charity_project_exists(
         project_id, session
     )
-    await check_project_can_be_deleted(project, session)
-    charity_project = await charity_project_crud.remove(
-        project, session
-    )
-    return charity_project
+    await check_project_can_be_deleted(project_id, session)
+    await check_charity_project_exists(project_id, session)
+    return await charity_project_crud.remove(project_id, session)
 
 
-@router.patch(
-    '/{charity_project_id}',
-    response_model=CharityProjectDB,
-    response_model_exclude_none=True,
-    dependencies=[Depends(current_superuser)],
-)
-async def update_charity_project(
-        charity_project_id: int,
-        obj_in: CharityProjectUpdate,
-        session: AsyncSession = Depends(get_async_session),
-):
-    """Только для суперюзеров.
+@router.patch( 
+    '/{charity_project_id}', 
+    response_model=CharityProjectDB, 
+    response_model_exclude_none=True, 
+    dependencies=[Depends(current_superuser)], 
+) 
+async def update_charity_project( 
+        charity_project_id: int, 
+        obj_in: CharityProjectUpdate, 
+        session: AsyncSession = Depends(get_async_session), 
+): 
+    """Только для суперюзеров. 
 
-    Закрытый проект нельзя редактировать;
-    нельзя установить требуемую сумму меньше уже вложенной.
-    """
-    charity_project = await check_charity_project_exists(
-        charity_project_id, session
-    )
-    await validate_charity_project_update(charity_project, obj_in)
+    Закрытый проект нельзя редактировать; 
+    нельзя установить требуемую сумму меньше уже вложенной. 
+    """ 
+    charity_project = await check_charity_project_exists(charity_project_id, session) 
+    await validate_charity_project_update(charity_project, obj_in) 
 
-    if obj_in.name is not None:
-        await check_name_duplicate(obj_in.name, session)
+    if obj_in.name is not None: 
+        await check_name_duplicate(obj_in.name, session) 
 
-    charity_project = await charity_project_crud.update(
-        charity_project, obj_in, session
-    )
-    return charity_project
+    return await charity_project_crud.update(charity_project, obj_in, session) 
