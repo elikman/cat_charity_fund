@@ -39,18 +39,17 @@ async def get_user_donations(
     return await donation_crud.get_by_user(session=session, user=user)
 
 
-@router.get(
-    '/',
-    response_model=list[DonationDB],
-    response_model_exclude_none=True,
-    dependencies=[Depends(current_superuser)],
-)
-async def get_all_donations(
-    session: AsyncSession = Depends(get_async_session),
-):
-    """Только для суперюзеров.
-
-    Возвращает список всех пожертвований.
-    """
-    all_donations = await donation_crud.get_multi(session)
-    return all_donations
+@router.get( 
+    '/', 
+    response_model=list[DonationDB], 
+    response_model_exclude_none=True, 
+    dependencies=[Depends(current_superuser)], 
+) 
+async def get_all_donations( 
+    session: AsyncSession = Depends(get_async_session), 
+): 
+    """Только для суперюзеров. 
+ 
+    Возвращает список всех пожертвований. 
+    """ 
+    return await donation_crud.get_multi(session)
