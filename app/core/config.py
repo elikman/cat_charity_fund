@@ -55,5 +55,8 @@ class Message:
     CHARITY_PROJ_NAME_NOT_NULL = 'Название проекта не может быть пустым.'
     CHARITY_PROJ_DESCR_NOT_NULL = 'Описание проекта не может быть пустым.'
     CHARITY_PROJ_NOT_FOUND = 'Проекта с таким ID не найдено.'
-    CHARITY_PROJ_INVESTED = 'В проект были внесены средства, не подлежит удалению!'
+    CHARITY_PROJ_INVESTED = (
+        'В проект были внесены средства, не подлежит '
+        'удалению!'
+    )
     CHARITY_PROJ_CLOSED = 'Закрытый проект нельзя редактировать!'

@@ -9,4 +9,7 @@ class CharityProject(CharityBase):
     description = Column(Text, nullable=False)
 
     def __repr__(self) -> str:
-        return f'Проект "{self.name}": {self.invested_amount}/{self.full_amount}'
+        return (
+            f'Проект "{self.name}": '
+            f'{self.invested_amount}/{self.full_amount}'
+        )
