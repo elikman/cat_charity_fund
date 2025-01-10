@@ -1,3 +1,4 @@
-from .charity_project import router as charity_project_router # noqa
-from .donation import router as donation_router # noqa
-from .user import router as user_router # noqa
+# Flake8: noqa F401
+from app.api.endpoints.user import router as user_router
+from app.api.endpoints.charity_project import router as charityproject_router
+from app.api.endpoints.donation import router as donation_router

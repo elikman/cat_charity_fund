@@ -1,15 +1,19 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, conint
+
+from app.schemas.charity_mixins import CharityDBMixin
 
 
-class DonationBase(BaseModel):
-    full_amount: PositiveInt
-    comment: Optional[str] = None
+class DonationCreate(BaseModel):
+    """Схема для создания нового пожертвования."""
+    full_amount: conint(gt=0)
+    comment: Optional[str]
 
 
-class DonationCreate(DonationBase):
+class DonationOwnerView(DonationCreate):
+    """Схема для просмотра пожертвований его создателем (упрощённый)."""
     id: int
     create_date: datetime
 
@@ -17,8 +21,6 @@ class DonationCreate(DonationBase):
         orm_mode = True
 
 
-class DonationDB(DonationCreate):
+class DonationDB(CharityDBMixin, DonationCreate):
+    """Схема для просмотра пожертвований администратором (полный)."""
     user_id: int
-    invested_amount: int = Field(0)
-    fully_invested: bool
-    close_date: Optional[datetime]

@@ -1,3 +1,4 @@
-from .user import User # noqa
-from .charity_project import CharityProject # noqa
-from .donation import Donation # noqa
+# Flake8: noqa F401
+from app.models.user import User
+from app.models.charity_project import CharityProject
+from app.models.donation import Donation

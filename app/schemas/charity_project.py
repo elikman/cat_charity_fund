@@ -1,38 +1,46 @@
-from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Extra, Field, PositiveInt
+from pydantic import BaseModel, conint, Extra, Field, validator
+
+from app.core.config import Constant, Message
+from app.schemas.charity_mixins import CharityDBMixin
 
 
 class CharityProjectBase(BaseModel):
-    name: Optional[str] = Field(None, max_length=100)
-    description: Optional[str] = Field(None)
-    full_amount: Optional[PositiveInt] = Field(None)
+    """Базовая схема проекта."""
+    name: Optional[str] = Field(None, max_length=Constant.NAME_FLD_MAX_LEN)
+    description: Optional[str]
+    full_amount: Optional[conint(gt=0)]
 
     class Config:
-        extra = Extra.forbid
-        min_anystr_length = 1
+        min_anystr_length = Constant.NAME_FLD_MIN_LEN
 
 
-class CharityProjectCreate(BaseModel):
-    name: str = Field(..., max_length=100)
-    description: str = Field(...)
-    full_amount: PositiveInt = Field(...)
-
-    class Config:
-        min_anystr_length = 1
+class CharityProjectCreate(CharityProjectBase):
+    """Схема для создания нового проекта."""
+    name: str = Field(..., max_length=Constant.NAME_FLD_MAX_LEN)
+    description: str
+    full_amount: conint(gt=0)
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    pass
+    """Схема для обновления существующего проекта."""
+    @validator('name')
+    def name_cant_be_none(cls, value: Optional[str]):
+        if value is None:
+            raise ValueError(Message.CHARITY_PROJ_NAME_NOT_NULL)
+        return value
 
-
-class CharityProjectDB(CharityProjectCreate):
-    id: int
-    invested_amount: int = Field(0)
-    fully_invested: bool = Field(False)
-    create_date: datetime
-    close_date: Optional[datetime]
+    @validator('description')
+    def description_cant_be_none(cls, value: Optional[str]):
+        if value is None:
+            raise ValueError(Message.CHARITY_PROJ_DESCR_NOT_NULL)
+        return value
 
     class Config:
-        orm_mode = True
+        extra = Extra.forbid
+
+
+class CharityProjectDB(CharityDBMixin, CharityProjectCreate):
+    """Схема для отображения проектов."""
+    pass

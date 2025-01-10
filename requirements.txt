@@ -47,7 +47,6 @@ pyjwt[crypto]
 pyparsing
 pytest-asyncio
 pytest-freezegun
-pytest-lazy-fixture
 pytest-pythonpath
 pytest
 python-dateutil
@@ -65,4 +64,4 @@ urllib3
 uvicorn[standard]
 watchgod
 websockets
-pydantic_settings
+pydantic-settings
